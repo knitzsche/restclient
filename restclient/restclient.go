@@ -17,12 +17,10 @@
 package restclient
 
 import (
-	"encoding/json"
-	"fmt"
 	"io"
+	"io/ioutil"
 	"net"
 	"net/http"
-	"os"
 )
 
 const (
@@ -30,7 +28,7 @@ const (
 	configurationURI = "/configuration"
 )
 
-var socketPath = os.Getenv("SNAP_COMMON") + "/control"
+var socketPath = "/run/snapd.socket"
 
 // TransportClient operations executed by any client requesting server.
 type TransportClient interface {
@@ -58,7 +56,7 @@ func unixDialer(_, _ string) (net.Conn, error) {
 }
 
 // DefaultRestClient created a RestClient object pointing to default socket path
-func defaultRestClient() *RestClient {
+func DefaultRestClient() *RestClient {
 	return newRestClient(&http.Client{
 		Transport: &http.Transport{
 			Dial: unixDialer,
@@ -66,29 +64,18 @@ func defaultRestClient() *RestClient {
 	})
 }
 
-// SendHTTPRequest sends a HTTP request to certain URI, using certain method and providing json parameters if needed
-func (restClient *RestClient) sendHTTPRequest(uri string, method string, body io.Reader) (*serviceResponse, error) {
+func (restClient *RestClient) SendHTTPRequest(uri string, method string, body io.Reader) (string, error) {
 	req, err := http.NewRequest(method, uri, body)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-
 	resp, err := restClient.transportClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
 	defer resp.Body.Close()
-
-	realResponse := &serviceResponse{}
-	if err := json.NewDecoder(resp.Body).Decode(&realResponse); err != nil {
-		return nil, err
+	if err != nil {
+		return "", err
 	}
+	b, _ := ioutil.ReadAll(resp.Body)
 
-	if realResponse.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("Failed: %s", realResponse.Result["message"])
-	}
-
-	return realResponse, nil
+	return string(b), nil
 }
 

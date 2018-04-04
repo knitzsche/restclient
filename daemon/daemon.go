@@ -18,17 +18,27 @@
 package main
 
 import (
-	_ "fmt"
-	_ "log"
-	_ "os"
-	_ "time"
-
-	"githut.com/knitzsche/restclient/restclient"
+	"fmt"
+	"path/filepath"
+	"github.com/knitzsche/restclient/restclient"
 )
 
+func uri(endpoint string) string {
+        //return fmt.Sprintf("https://unix/%s", filepath.Join("v2", endpoint))
+        return fmt.Sprintf("http://unix/%s", filepath.Join("v2", endpoint))
+}
 
 func main() {
 
-	c := restclient.DefaultClient()
+	c := restclient.DefaultRestClient()
+
+	u := uri("assertions/model")	
+	fmt.Println(u)
+	resp, err := c.SendHTTPRequest(u, "GET", nil)
+	if err != nil {
+		fmt.Println("error", err)
+		return
+	}
+	fmt.Printf("RESULT: %v\n", resp)
 
 }
