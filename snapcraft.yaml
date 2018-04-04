@@ -13,7 +13,7 @@ confinement: strict
 apps:
   daemon:
     command: daemon
-    plugs: [network, snapd-control]
+    plugs: [snapd-control]
 
 parts:
   go:
