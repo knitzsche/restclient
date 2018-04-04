@@ -9,6 +9,7 @@ confinement: strict
 
 apps:
   daemon:
+    daemon: simple
     command: daemon
     plugs: [snapd-control]
 
