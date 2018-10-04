@@ -8,6 +8,9 @@ grade: devel # must be 'stable' to release into candidate/stable channels
 confinement: strict
 
 apps:
+  install:
+    command: install
+    plugs: [snapd-control]
   daemon:
     daemon: simple
     command: daemon
@@ -18,3 +21,12 @@ parts:
     plugin: go
     source: . 
     go-importpath: github.com/knitzsche/restclient
+    stage:
+      - -bin/install
+  cmds:
+    plugin: go
+    source: .
+    go-importpath: github.com/knitzsche/install
+    stage:
+      - -bin/restclient
+      - -bin/daemon

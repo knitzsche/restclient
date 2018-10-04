@@ -17,6 +17,7 @@
 package restclient
 
 import (
+        "fmt"
 	"io"
 	"io/ioutil"
 	"net"
@@ -33,13 +34,6 @@ var socketPath = "/run/snapd.socket"
 // TransportClient operations executed by any client requesting server.
 type TransportClient interface {
 	Do(req *http.Request) (*http.Response, error)
-}
-
-type serviceResponse struct {
-	Result     map[string]interface{} `json:"result"`
-	Status     string                 `json:"status"`
-	StatusCode int                    `json:"status-code"`
-	Type       string                 `json:"type"`
 }
 
 // RestClient defines client for rest api exposed by a unix socket
@@ -79,3 +73,25 @@ func (restClient *RestClient) SendHTTPRequest(uri string, method string, body io
 	return string(b), nil
 }
 
+func (restclient *RestClient) Yeah(s string) {
+	fmt.Println(s)
+}
+
+func (restClient *RestClient) SendHTTPRequestHeaders(uri string, method string, body io.Reader, headers map[string]string) (string, error) {
+	req, err := http.NewRequest(method, uri, body)
+	if err != nil {
+		return "", err
+	}
+
+	for key, value := range headers {
+		req.Header.Set(key,value)
+	}
+	resp, err := restClient.transportClient.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	b, _ := ioutil.ReadAll(resp.Body)
+
+	return string(b), nil
+}
