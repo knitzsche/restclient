@@ -149,7 +149,6 @@ func main() {
 		fmt.Printf("Error: cannot copy snap to part due to %v.\n", file, err)
 		return
 	}
-	fmt.Println("== done writing part fields")
 	u := uri("snaps")
         c := restclient.DefaultRestClient()
 	headers := map[string]string{
