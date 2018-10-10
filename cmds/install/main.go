@@ -22,12 +22,10 @@ import (
     "bytes"
     "encoding/json"
     "io"
-    //"net/http"
     "fmt"
     "os"
     "mime/multipart"
     "path/filepath"
-    //"strings"
 
     "github.com/knitzsche/restclient/restclient"
 )
@@ -35,10 +33,15 @@ import (
 func help() string {
 
     text :=
-        `Usage: hahaha COMMAND [VALUE]
+        `Usage: snapd-restclient.install COMMAND [VALUE]
 
 Commands:
-    you wish
+    ack SNAP-ASSERTION-FILE (requires sudo: note: cp FILE to SNAP_DATA first)
+    sideload SNAP-FILE (requires sudo. cp FILE to SNAP_DATA first)
+    system-info (returns system info)
+    snaps (returns installed snap info)
+    login UBUNTU-ACCOUNT-EMAIL PASSWORD (returns auth)
+    test (outputs "yeah")
 `
     return text
 }
@@ -115,7 +118,7 @@ func main() {
     case "test":
         c := restclient.DefaultRestClient()
 	c.Yeah("yeah")
-    case "sideload": //assert must be in SNAP_DATA
+    case "sideload": //assert and snap file must be in SNAP_DATA
 	var err error
         if len(args) < 2 { 
             fmt.Println("Error: no arg for sideload snap filename.")
@@ -127,8 +130,6 @@ func main() {
 		fmt.Printf("Error: arg %v does not exist.\n", args[1])
 		return
 	}
-	fmt.Printf("%v exists.\n", filePath)
-
 	file, err1 := os.Open(filePath)
 	if err1 != nil {
 		fmt.Printf("Error: cannot read %v due to %v.\n", file, err1)
@@ -206,6 +207,5 @@ func main() {
                 return
 	}
 	fmt.Println(r.Result["macaroon"])
-	//so that macaroon is good. next step is using it authenticate for install
     }
 }
