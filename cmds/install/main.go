@@ -166,10 +166,14 @@ func main() {
         }
         fmt.Printf("%v\n", resp)
     case "login":
-        if len(args) < 4 { 
+	var otp = false // otp means two-factor auth
+        if len(args) < 3 { 
             fmt.Println("Error: need two args: Ubuntu account email and password.")
             return
         }
+	if len(args) == 4 {
+		otp = true
+	}
 	type Login struct {
 		Email string `json:"email"`
 		Password string `json:"password"`
@@ -179,7 +183,9 @@ func main() {
 	l := &Login{}
 	l.Email = args[1]
 	l.Password = args[2]
-	l.OTP = args[3]
+	if otp {
+		l.OTP = args[3]
+	}
 
 	b := new(bytes.Buffer)
 	json.NewEncoder(b).Encode(l)
