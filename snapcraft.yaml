@@ -1,8 +1,8 @@
-name: snapd-restapi
+name: snapd-restapi-client-poc
 version: '1'
-summary: Use snapd rest api
+summary: Use some of the snapd rest api
 description: |
-  Use the snapd rest api
+  Use the snapd rest api, for example sideloading a snap
 
 grade: devel # must be 'stable' to release into candidate/stable channels
 confinement: strict
