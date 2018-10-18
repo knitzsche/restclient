@@ -33,14 +33,14 @@ import (
 func help() string {
 
     text :=
-        `Usage: snapd-restclient.install COMMAND [VALUE]
+        `Usage: [sudo] snapd-restclient.install COMMAND [VALUE]
 
 Commands:
     ack SNAP-ASSERTION-FILE (requires sudo: note: cp FILE to SNAP_DATA first)
     sideload SNAP-FILE (requires sudo. cp FILE to SNAP_DATA first)
     system-info (returns system info)
     snaps (returns installed snap info)
-    login UBUNTU-ACCOUNT-EMAIL PASSWORD (returns auth)
+    login UBUNTU-ACCOUNT-EMAIL PASSWORD [TWO_FACTOR] (requires internet connection. returns auth macaroon)
     test (outputs "yeah")
 `
     return text
